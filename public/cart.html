@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diana’s Jewelry - Cart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/plugins.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <header id="header">
+    <div class="container topbar">
+      <a href="index.html" id="logo"><i class="fas fa-gem"></i> Diana’s Jewelry</a>
+      <div class="header-icons">
+        <a href="wishlist.html" title="Wishlist"><i class="fas fa-heart"></i> <span class="icon-text">Wishlist</span> <span id="wishlist-counter" class="count"></span></a>
+        <a href="cart.html" title="Cart"><i class="fas fa-shopping-cart"></i> <span class="icon-text">Cart</span> <span id="cart-counter" class="count"></span></a>
+        <a href="account.html" title="Account"><i class="fas fa-user"></i> <span class="icon-text">Account</span></a>
+        <a href="logout.html" title="Sign Out"><i class="fas fa-sign-out-alt"></i> <span class="icon-text">Sign Out</span></a>
+        <button class="dark-toggle" aria-label="Toggle dark mode"><i class="fas fa-moon"></i> <span class="icon-text">Dark Mode</span></button>
+      </div>
+    </div>
+  </header>
+
+  <div id="menu">
+    <div class="container">
+      <button class="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+      <ul class="main-nav">
+        <li>
+          <a href="javascript:void(0)">New Collection</a>
+          <ul class="dropdown" role="menu" aria-label="New Collection submenu">
+            <li><a href="#featured-items">Featured Items</a></li>
+            <li><a href="#limited-edition">Limited Edition</a></li>
+            <li><a href="#seasonal-picks">Seasonal Picks</a></li>
+          </ul>
+        </li>
+        <li><a href="products.html?category=necklaces">Necklaces</a></li>
+        <li><a href="products.html?category=earrings">Earrings</a></li>
+        <li><a href="products.html?category=rings">Rings</a></li>
+        <li><a href="text-page.html">About Us</a></li>
+        <li><a href="checkout.html">Checkout</a></li>
+        <li><a href="feedback.html">Feedback</a></li>
+        <li><a href="design.html">Create Your Design</a></li>
+      </ul>
+      <div class="search-bar" role="search" aria-label="Site search">
+        <input type="search" id="search-input" placeholder="Search products...">
+        <button type="button" id="search-btn"><i class="fas fa-search"></i></button>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="cart-section container" role="main" aria-label="Shopping cart">
+    <h2>Your Cart</h2>
+    <div class="cart-table" id="cart-table">
+      <table id="cart-items">
+        <thead>
+          <tr>
+            <th scope="col" class="items">Items</th>
+            <th scope="col" class="price">Price</th>
+            <th scope="col" class="qnt">Quantity</th>
+            <th scope="col" class="total">Total</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="empty-cart hidden" id="empty-cart" style="text-align:center; margin-top:20px;">
+      <p>Your cart is currently empty.</p>
+    </div>
+    <div class="total-count">
+      <h4>Summary</h4>
+      <h3>Subtotal: $<span id="cart-subtotal"></span></h3>
+      <h3>Shipping: $<span id="cart-shipping"></span></h3>
+      <h3>Total: $<strong id="cart-total"></strong></h3>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+        <button class="btn-clear cart-button" id="clear-cart" aria-label="Clear cart">Clear Cart</button>
+        <a href="products.html" class="btn-primary">Browse Products</a>
+      </div>
+      <a href="checkout.html" class="cart-button btn-primary" id="checkout-btn" aria-label="Proceed to checkout">Proceed to Checkout</a>
+    </div>
+  </section>
+
+  <footer id="footer">
+    <div class="container">
+      <div>
+        <h4>About Diana’s Jewelry</h4>
+        <p>Diana’s Jewelry offers timeless elegance and modern craftsmanship — discover pieces made with care and passion.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="index.html">Home</a></p>
+        <p><a href="products.html">Products</a></p>
+        <p><a href="wishlist.html">Wishlist</a></p>
+        <p><a href="cart.html">Cart</a></p>
+        <p><a href="feedback.html">Feedback</a></p>
+      </div>
+      <div>
+        <h4>Contact & Social</h4>
+        <p>Email: support@dianasjewelry.com</p>
+        <p>Phone: +123 456 7890</p>
+        <div class="socials">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Newsletter</h4>
+        <p>Subscribe to get the latest updates and exclusive offers.</p>
+        <div class="newsletter-form">
+          <input type="text" placeholder="Your Name" aria-label="Your Name">
+          <input type="email" placeholder="Your Email" aria-label="Your Email">
+          <button type="button" aria-label="Subscribe to newsletter">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="chat-btn" aria-label="Open live chat" title="Chat with us"><i class="fas fa-comment-dots"></i></button>
+  <div id="chat-widget" class="chat-widget hidden">
+    <div class="chat-header">
+      <span>AI Assistant</span>
+      <button id="close-chat" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Type your question..." />
+      <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+      <div class="loader hidden" id="chat-loader"></div>
+    </div>
+  </div>
+  <button class="to-top" aria-label="Scroll to top" title="Back to top"><i class="fas fa-chevron-up"></i></button>
+</body>
+</html>

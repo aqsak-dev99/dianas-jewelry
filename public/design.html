@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create your custom jewelry masterpiece with Diana’s Jewelry personalized design studio.">
+  <title>Design - Diana’s Jewelry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .save-message { display: none; }
+    .design-modal { display: none; }
+    .btn-primary, .btn-secondary, .btn-close { cursor: pointer; }
+    #design-preview-placeholder { font-size: 50px; text-align: center; margin-top: 20px; }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <header id="header">
+    <div class="container topbar">
+      <a href="index.html" id="logo" aria-label="Diana's Jewelry Home"><i class="fas fa-gem"></i> Diana’s Jewelry</a>
+      <div class="header-icons">
+        <a href="wishlist.html" title="Wishlist"><i class="fas fa-heart"></i> <span class="icon-text">Wishlist</span> <span id="wishlist-counter" class="count"></span></a>
+        <a href="cart.html" title="Cart"><i class="fas fa-shopping-cart"></i> <span class="icon-text">Cart</span> <span id="cart-counter" class="count"></span></a>
+        <a href="account.html" title="Account"><i class="fas fa-user"></i> <span class="icon-text">Account</span></a>
+        <a href="logout.html" title="Sign Out"><i class="fas fa-sign-out-alt"></i> <span class="icon-text">Sign Out</span></a>
+        <button class="dark-toggle" aria-label="Toggle dark mode"><i class="fas fa-moon"></i> <span class="icon-text">Dark Mode</span></button>
+      </div>
+    </div>
+  </header>
+  <nav id="menu">
+    <div class="container">
+      <button class="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+      <ul class="main-nav">
+        <li>
+          <a href="javascript:void(0)">New Collection</a>
+          <ul class="dropdown" role="menu" aria-label="New Collection submenu">
+            <li><a href="#featured-items">Featured Items</a></li>
+            <li><a href="#limited-edition">Limited Edition</a></li>
+            <li><a href="#seasonal-picks">Seasonal Picks</a></li>
+          </ul>
+        </li>
+        <li><a href="products.html?category=necklaces">Necklaces</a></li>
+        <li><a href="products.html?category=earrings">Earrings</a></li>
+        <li><a href="products.html?category=rings">Rings</a></li>
+        <li><a href="text-page.html">About Us</a></li>
+        <li><a href="checkout.html">Checkout</a></li>
+        <li><a href="feedback.html">Feedback</a></li>
+        <li><a href="design.html">Create Your Design</a></li>
+      </ul>
+      <div class="search-bar" role="search" aria-label="Site search">
+        <input type="search" id="search-input" placeholder="Search products...">
+        <button type="button" id="search-btn"><i class="fas fa-search"></i></button>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+  </nav>
+  <div id="breadcrumbs">
+    <div class="container">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li>Design</li>
+      </ul>
+    </div>
+  </div>
+  <main id="body">
+    <div class="design-section">
+      <div class="container">
+        <div class="design-header">
+          <h1 class="section-title">Craft Your Dream Jewelry</h1>
+          <p class="design-intro">Design a unique piece that reflects your style with our interactive tool, powered by advanced AI.</p>
+          <div class="design-divider">
+            <hr>
+            <i class="fas fa-gem"></i>
+            <hr>
+          </div>
+        </div>
+        <div class="design-container">
+          <div class="design-form-card">
+            <h2>Your Vision</h2>
+            <form id="design-form">
+              <div class="form-group">
+                <label for="jewelry-type"><i class="fas fa-ring"></i> Jewelry Type</label>
+                <select id="jewelry-type" name="jewelry-type" required>
+                  <option value="">Select Type</option>
+                  <option value="Necklace">Necklace</option>
+                  <option value="Ring">Ring</option>
+                  <option value="Bracelet">Bracelet</option>
+                  <option value="Earrings">Earrings</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="metal"><i class="fas fa-gem"></i> Metal</label>
+                <select id="metal" name="metal" required>
+                  <option value="">Select Metal</option>
+                  <option value="Gold">Gold</option>
+                  <option value="Silver">Silver</option>
+                  <option value="Platinum">Platinum</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="gemstone"><i class="fas fa-diamond"></i> Gemstone</label>
+                <select id="gemstone" name="gemstone" required>
+                  <option value="">Select Gemstone</option>
+                  <option value="Diamond">Diamond</option>
+                  <option value="Emerald">Emerald</option>
+                  <option value="Ruby">Ruby</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="style"><i class="fas fa-star"></i> Style Preference</label>
+                <select id="style" name="style" required>
+                  <option value="">Select Style</option>
+                  <option value="Classic">Classic</option>
+                  <option value="Modern">Modern</option>
+                  <option value="Vintage">Vintage</option>
+                </select>
+              </div>
+              <div class="button-group">
+                <button type="submit" class="btn-primary">Craft Your Masterpiece</button>
+                <button type="button" id="save-design" class="btn-secondary">Save Design</button>
+                <button type="button" id="view-designs" class="btn-secondary">View Saved Designs</button>
+              </div>
+              <p id="save-message" class="save-message">Design saved successfully!</p>
+            </form>
+          </div>
+          <div class="design-preview-card">
+            <h2>Your Design Preview</h2>
+            <p id="design-result" class="loading"><i class="fas fa-gem"></i> Select options to see your custom design...</p>
+            <div id="design-preview-placeholder">💍✨</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="saved-designs-modal" class="design-modal">
+      <div class="modal-content">
+        <h3>Saved Designs</h3>
+        <button type="button" class="btn-close">Close</button>
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>Jewelry Type</th>
+              <th>Metal</th>
+              <th>Gemstone</th>
+              <th>Style</th>
+              <th>Description</th>
+              <th>Saved On</th>
+            </tr>
+          </thead>
+          <tbody id="saved-designs-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <footer id="footer">
+    <div class="container">
+      <div>
+        <h4>About Diana’s Jewelry</h4>
+        <p>Diana’s Jewelry offers timeless elegance and modern craftsmanship — discover pieces made with care and passion.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="index.html">Home</a></p>
+        <p><a href="products.html">Products</a></p>
+        <p><a href="wishlist.html">Wishlist</a></p>
+        <p><a href="cart.html">Cart</a></p>
+        <p><a href="design.html">Design</a></p>
+      </div>
+      <div>
+        <h4>Contact & Social</h4>
+        <p>Email: support@dianasjewelry.com</p>
+        <p>Phone: +123 456 7890</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Newsletter</h4>
+        <p>Subscribe to get the latest updates and exclusive offers.</p>
+        <div class="newsletter-form">
+          <input type="text" placeholder="Your Name">
+          <input type="email" placeholder="Your Email">
+          <button type="button">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <button class="to-top" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
+  <div id="chat-widget" class="chat-widget hidden">
+    <div class="chat-header">
+      <span>AI Assistant</span>
+      <button id="close-chat" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Type your question..." />
+      <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+      <div class="loader hidden" id="chat-loader"></div>
+    </div>
+  </div>
+  <button class="chat-btn" aria-label="Open chat"><i class="fas fa-comment-dots"></i></button>
+
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/design.js"></script>
+  <script>
+    // Update preview dynamically
+    $('#design-form select').on('change', function() {
+      const type = $('#jewelry-type').val();
+      const metal = $('#metal').val();
+      const gem = $('#gemstone').val();
+      const style = $('#style').val();
+
+      if(type && metal && gem && style) {
+        $('#design-result').text(`Preview: ${style} ${metal} ${type} with ${gem}`);
+      } else {
+        $('#design-result').html('<i class="fas fa-gem"></i> Select options to see your custom design...');
+      }
+    });
+  </script>
+</body>
+</html>

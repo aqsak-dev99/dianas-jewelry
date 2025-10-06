@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Diana’s Jewelry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    .confirmation-message {
+      text-align: center;
+      padding: 50px 20px;
+      display: none;
+    }
+    .confirmation-message h2 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .confirmation-message p {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .confirmation-message .cart-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 25px;
+      background: #b565a7;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+    .confirmation-message .cart-button:hover {
+      background: #923b8c;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <div class="container topbar">
+      <a href="index.html" id="logo"><i class="fas fa-gem"></i> Diana’s Jewelry</a>
+      <div class="header-icons">
+        <a href="wishlist.html"><i class="fas fa-heart"></i><span>Wishlist</span><span id="wishlist-counter" class="count"></span></a>
+        <a href="cart.html"><i class="fas fa-shopping-cart"></i><span>Cart</span><span id="cart-counter" class="count"></span></a>
+        <a href="account.html"><i class="fas fa-user"></i><span>Account</span></a>
+        <a href="logout.html"><i class="fas fa-sign-out-alt"></i><span>Sign Out</span></a>
+        <button class="dark-toggle" aria-label="Toggle dark mode"><i class="fas fa-moon"></i><span>Dark</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav id="menu">
+    <div class="container">
+      <ul class="main-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html?category=necklaces">Necklaces</a></li>
+        <li><a href="products.html?category=earrings">Earrings</a></li>
+        <li><a href="products.html?category=bracelets">Bracelets</a></li>
+        <li><a href="products.html?category=rings">Rings</a></li>
+        <li><a href="cart.html">Cart</a></li>
+        <li><a href="text-page.html">About Us</a></li>
+        <li><a href="checkout.html" class="active">Checkout</a></li>
+        <li><a href="design.html">Create Your Design</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Checkout -->
+  <section class="checkout-section container">
+    <h1 class="section-title">Checkout</h1>
+    <div class="checkout-grid" id="checkout-grid">
+      <div class="checkout-left">
+        <div class="card checkout-review">
+          <h2>Review Your Items</h2>
+          <table id="checkout-items">
+            <thead>
+              <tr>
+                <th scope="col" class="items">Items</th>
+                <th scope="col" class="price">Price</th>
+                <th scope="col" class="qnt">Quantity</th>
+                <th scope="col" class="total">Total</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div id="empty-cart-message" class="hidden">
+            <p>Your cart is empty. <a href="products.html">Shop now</a></p>
+          </div>
+        </div>
+        <aside class="card checkout-summary">
+          <h3>Order Summary</h3>
+          <p>Subtotal: $<span id="checkout-subtotal"></span></p>
+          <p>Shipping: $<span id="checkout-shipping"></span></p>
+          <p class="summary-total">Total: <strong>$<span id="checkout-total"></strong></span></p>
+        </aside>
+      </div>
+      <div class="checkout-right">
+        <!-- Shipping Info -->
+        <div class="card checkout-info">
+          <h2>Shipping Information</h2>
+          <form id="shipping-form" class="form-grid">
+            <label>Full Name <input type="text" id="name" aria-label="Full Name" value="John A. Doe"></label>
+            <span id="name-error" class="error"></span>
+            <label>Address <input type="text" id="address" aria-label="Address" value="123 Main Street, Apt 4B"></label>
+            <span id="address-error" class="error"></span>
+            <label>City <input type="text" id="city" aria-label="City" value="New York"></label>
+            <span id="city-error" class="error"></span>
+            <label>Phone <input type="text" id="phone" aria-label="Phone" value="2125551234"></label>
+            <span id="phone-error" class="error"></span>
+            <button type="button" class="btn-primary" onclick="nextStep('shipping')" aria-label="Proceed to payment">Proceed to Payment</button>
+          </form>
+        </div>
+        <!-- Payment -->
+        <div class="card checkout-payment" id="payment-section" style="display:none;">
+          <h2><i class="fas fa-credit-card"></i> Payment Method</h2>
+          <form id="payment-form" class="form-grid">
+            <div class="payment-methods">
+              <label class="payment-option">
+                <input type="radio" name="payment-method" value="card" data-target="card-details" checked>
+                <div class="payment-option-content">
+                  <i class="fas fa-credit-card"></i> Credit/Debit Card
+                </div>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment-method" value="paypal" data-target="paypal-details">
+                <div class="payment-option-content">
+                  <i class="fab fa-paypal"></i> PayPal
+                </div>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment-method" value="bank" data-target="bank-details">
+                <div class="payment-option-content">
+                  <i class="fas fa-university"></i> Bank Transfer
+                </div>
+              </label>
+            </div>
+            <div id="card-details" class="payment-details">
+              <label>Card Number <input type="text" id="card-number" placeholder="1234 5678 9012 3456" aria-label="Card Number" value="4111111111111111"></label>
+              <span id="card-number-error" class="error"></span>
+              <div class="payment-details-row">
+                <label>Expiry <input type="text" id="expiry" placeholder="MM/YY" aria-label="Expiry Date" value="12/25"></label>
+                <span id="expiry-error" class="error"></span>
+                <label>CVV <input type="text" id="cvv" placeholder="123" aria-label="CVV" value="123"></label>
+                <span id="cvv-error" class="error"></span>
+              </div>
+            </div>
+            <div id="paypal-details" class="payment-details" style="display:none;">
+              <label>PayPal Email <input type="email" id="paypal-email" placeholder="example@paypal.com" aria-label="PayPal Email" value="user@example.com"></label>
+            </div>
+            <div id="bank-details" class="payment-details" style="display:none;">
+              <label>Account Number <input type="text" id="bank-account" placeholder="Enter account number" aria-label="Account Number" value="1234567890"></label>
+              <label>Routing Number <input type="text" id="bank-routing" placeholder="Enter routing number" aria-label="Routing Number" value="021000021"></label>
+            </div>
+            <button type="button" class="btn-primary" onclick="nextStep('payment')" aria-label="Review order">Review Order</button>
+          </form>
+        </div>
+        <!-- Review Section -->
+        <div class="card checkout-review" id="review-section" style="display:none;">
+          <h2>Review Your Order</h2>
+          <h3>Payment Method</h3>
+          <p id="review-payment"></p>
+          <h3>Order Items</h3>
+          <table id="review-items">
+            <thead>
+              <tr>
+                <th scope="col" class="items">Items</th>
+                <th scope="col" class="price">Price</th>
+                <th scope="col" class="qnt">Quantity</th>
+                <th scope="col" class="total">Total</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <h3>Order Summary</h3>
+          <p>Subtotal: $<span id="review-subtotal"></span></p>
+          <p>Shipping: $<span id="review-shipping-cost"></span></p>
+          <p class="summary-total">Total: <strong>$<span id="review-total"></strong></span></p>
+          <button type="button" class="btn-primary" onclick="placeOrder()" aria-label="Place order">Place Order</button>
+          <button type="button" class="btn-primary" onclick="prevStep('review')" aria-label="Back to payment">Back to Payment</button>
+        </div>
+      </div>
+    </div>
+  </section>
+    <div class="confirmation-message" id="confirmation-message">
+      <h2>Order Placed Successfully!</h2>
+      <p>Thank you for your purchase. Your order has been received and will be processed soon.</p>
+      <p>You can track your order in your <a href="account.html">Account</a>.</p>
+      <a href="index.html" class="cart-button">Continue Shopping</a>
+    </div>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>About Diana’s Jewelry</h4>
+        <p>Diana’s Jewelry offers timeless elegance and modern craftsmanship — discover pieces made with care and passion.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="wishlist.html">Wishlist</a></li>
+          <li><a href="cart.html">Cart</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact & Social</h4>
+        <p>Email: support@dianasjewelry.com</p>
+        <p>Phone: +123 456 7890</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div>
+        <h4>Newsletter</h4>
+        <p>Subscribe to get the latest updates and exclusive offers.</p>
+        <div class="newsletter-form">
+          <input type="text" placeholder="Your Name" aria-label="Your Name">
+          <input type="email" placeholder="Your Email" aria-label="Your Email">
+          <button type="button" aria-label="Subscribe to newsletter">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button class="chat-btn" aria-label="Open live chat" title="Chat with us"><i class="fas fa-comment-dots"></i></button>
+  <div id="chat-widget" class="chat-widget hidden">
+    <div class="chat-header">
+      <span>AI Assistant</span>
+      <button id="close-chat" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Type your question..." aria-label="Type your question" />
+      <button id="send-btn" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
+      <div class="loader hidden" id="chat-loader"></div>
+    </div>
+  </div>
+  <button class="to-top" aria-label="Scroll to top" title="Back to top"><i class="fas fa-chevron-up"></i></button>
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
