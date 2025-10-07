@@ -1,4 +1,7 @@
 jQuery(document).ready(function($) {
+  // Define API base URL
+  const API_URL = 'https://dianas-jewelry-production.up.railway.app';
+
   // Helper: Ensure products are loaded before calling loadProduct
   function ensureProductsLoadedThenLoadProduct() {
     // Always try to load from localStorage first
@@ -15,7 +18,7 @@ jQuery(document).ready(function($) {
     } else {
       // Always fetch from API if not present or empty
       $.ajax({
-        url: '/api/products',
+        url: `${API_URL}/api/products`,
         type: 'GET',
         success: function(data) {
           if (data && Array.isArray(data)) {
@@ -112,7 +115,7 @@ jQuery(document).ready(function($) {
   // Fetch products from DB
   function fetchProducts() {
     $.ajax({
-      url: '/api/products',
+      url: `${API_URL}/api/products`,
       type: 'GET',
       success: function(data) {
         if (data && Array.isArray(data) && data.length > 0 && data.every(p => p.image_url && p.name && !isNaN(p.price))) {
@@ -155,10 +158,6 @@ jQuery(document).ready(function($) {
         } else if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
           renderIndexSections();
         }
-  // On product.html, ensure products are loaded before loading product
-  if (window.location.pathname.includes('product.html')) {
-    ensureProductsLoadedThenLoadProduct();
-  }
       }
     });
   }
@@ -166,7 +165,7 @@ jQuery(document).ready(function($) {
   // Fetch wishlist from DB
   function fetchWishlist() {
     $.ajax({
-      url: `/api/wishlist?userId=${getUserId()}`,
+      url: `${API_URL}/api/wishlist?userId=${getUserId()}`,
       type: 'GET',
       success: function(data) {
         console.log('Wishlist data from API:', data);
@@ -204,7 +203,7 @@ jQuery(document).ready(function($) {
   // Fetch cart from DB
   function fetchCart() {
     $.ajax({
-      url: `/api/cart?userId=${getUserId()}`,
+      url: `${API_URL}/api/cart?userId=${getUserId()}`,
       type: 'GET',
       success: function(data) {
         console.log('Cart data from API:', data);
@@ -311,7 +310,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: '/api/cart/add',
+        url: `${API_URL}/api/cart/add`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ product_id: id, quantity: 1, image_url, userId: getUserId() }),
@@ -337,7 +336,7 @@ jQuery(document).ready(function($) {
       const isWishlisted = wishlist.some(w => w.product_id === id);
       if (isWishlisted) {
         $.ajax({
-          url: `/api/wishlist/remove/${id}?userId=${getUserId()}`,
+          url: `${API_URL}/api/wishlist/remove/${id}?userId=${getUserId()}`,
           type: 'DELETE',
           success: function() {
             fetchWishlist();
@@ -348,7 +347,7 @@ jQuery(document).ready(function($) {
         });
       } else {
         $.ajax({
-          url: '/api/wishlist/add',
+          url: `${API_URL}/api/wishlist/add`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ product_id: id, userId: getUserId() }),
@@ -420,7 +419,7 @@ jQuery(document).ready(function($) {
           return;
         }
         $.ajax({
-          url: '/api/cart/add',
+          url: `${API_URL}/api/cart/add`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ product_id: productId, quantity: 1, image_url, userId: getUserId() }),
@@ -445,7 +444,7 @@ jQuery(document).ready(function($) {
         const isWishlisted = wishlist.some(w => w.product_id === productId);
         if (isWishlisted) {
           $.ajax({
-            url: `/api/wishlist/remove/${productId}?userId=${getUserId()}`,
+            url: `${API_URL}/api/wishlist/remove/${productId}?userId=${getUserId()}`,
             type: 'DELETE',
             success: function() {
               fetchWishlist();
@@ -456,7 +455,7 @@ jQuery(document).ready(function($) {
           });
         } else {
           $.ajax({
-            url: '/api/wishlist/add',
+            url: `${API_URL}/api/wishlist/add`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ product_id: productId, userId: getUserId() }),
@@ -512,7 +511,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: `/api/wishlist/remove/${product_id}?userId=${getUserId()}`,
+        url: `${API_URL}/api/wishlist/remove/${product_id}?userId=${getUserId()}`,
         type: 'DELETE',
         success: function() {
           fetchWishlist();
@@ -531,7 +530,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: '/api/cart/add',
+        url: `${API_URL}/api/cart/add`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ product_id, quantity: 1, image_url, userId: getUserId() }),
@@ -671,7 +670,7 @@ jQuery(document).ready(function($) {
   // Render orders
   function renderOrders() {
     $.ajax({
-      url: `/api/orders?userId=${getUserId()}`,
+      url: `${API_URL}/api/orders?userId=${getUserId()}`,
       type: 'GET',
       success: function(orders) {
         const container = $('#orders-container');
@@ -758,7 +757,7 @@ jQuery(document).ready(function($) {
         const $results = $('#search-results');
         $results.html('<div>Searching...</div>').show();
         $.ajax({
-          url: '/api/ask',
+          url: `${API_URL}/api/ask`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ message: 'Search for: ' + query }),
@@ -789,7 +788,7 @@ jQuery(document).ready(function($) {
       const email = $('.newsletter-form input[type="email"]').val().trim();
       if (name && email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         $.ajax({
-          url: '/api/newsletter',
+          url: `${API_URL}/api/newsletter`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ name, email }),
@@ -854,7 +853,7 @@ jQuery(document).ready(function($) {
       $('#chat-input').val('');
 
       $.post({
-        url: '/api/chat',
+        url: `${API_URL}/api/chat`,
         contentType: 'application/json',
         data: JSON.stringify({ message: input }),
         success: function(response) {
@@ -1003,7 +1002,7 @@ jQuery(document).ready(function($) {
 
     $('#clear-cart').on('click', function() {
       $.ajax({
-        url: `/api/cart/clear?userId=${getUserId()}`,
+        url: `${API_URL}/api/cart/clear?userId=${getUserId()}`,
         type: 'DELETE',
         success: function() {
           fetchCart();
@@ -1031,7 +1030,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: `/api/cart/update/${product_id}`,
+        url: `${API_URL}/api/cart/update/${product_id}`,
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify({ quantity: (item.quantity || 1) + 1, variant: item.variant, image_url, userId: getUserId() }),
@@ -1054,7 +1053,7 @@ jQuery(document).ready(function($) {
       }
       if (item.quantity > 1) {
         $.ajax({
-          url: `/api/cart/update/${product_id}`,
+          url: `${API_URL}/api/cart/update/${product_id}`,
           type: 'PUT',
           contentType: 'application/json',
           data: JSON.stringify({ quantity: item.quantity - 1, variant: item.variant, image_url, userId: getUserId() }),
@@ -1067,7 +1066,7 @@ jQuery(document).ready(function($) {
         });
       } else {
         $.ajax({
-          url: `/api/cart/remove/${product_id}?userId=${getUserId()}`,
+          url: `${API_URL}/api/cart/remove/${product_id}?userId=${getUserId()}`,
           type: 'DELETE',
           success: function() {
             fetchCart();
@@ -1083,8 +1082,8 @@ jQuery(document).ready(function($) {
   // Checkout page logic
   if (window.location.pathname.includes('checkout.html')) {
     function validateShipping() {
-  let isValid = true;
-  console.log('[DEBUG] Validating shipping fields...');
+      let isValid = true;
+      console.log('[DEBUG] Validating shipping fields...');
       const fields = [
         { id: 'name', error: 'Please enter your full name.' },
         { id: 'address', error: 'Please enter your address.' },
@@ -1193,8 +1192,8 @@ jQuery(document).ready(function($) {
     }
 
     function showError(fieldId, message) {
-  $(`#${fieldId}-error`).text(message).addClass('active').show();
-  $(`#${fieldId}`).addClass('error');
+      $(`#${fieldId}-error`).text(message).addClass('active').show();
+      $(`#${fieldId}`).addClass('error');
     }
 
     window.nextStep = function(step) {
@@ -1214,10 +1213,10 @@ jQuery(document).ready(function($) {
           ${shippingData.city}<br>
           ${shippingData.phone}
         `);
-  $('#shipping-section').addClass('hidden');
-  $('#payment-section').removeClass('hidden').css('display', '');
-  $('#step1').removeClass('step-active').addClass('step-inactive').removeAttr('aria-current');
-  $('#step2').removeClass('step-inactive').addClass('step-active').attr('aria-current', 'step');
+        $('#shipping-section').addClass('hidden');
+        $('#payment-section').removeClass('hidden').css('display', '');
+        $('#step1').removeClass('step-active').addClass('step-inactive').removeAttr('aria-current');
+        $('#step2').removeClass('step-inactive').addClass('step-active').attr('aria-current', 'step');
       } else if (step === 'payment') {
         if (!validatePayment()) {
           return;
@@ -1232,8 +1231,8 @@ jQuery(document).ready(function($) {
           paymentDisplay = `Bank Transfer (Account ending in ${$('#bank-account').val().slice(-4)})`;
         }
         $('#review-payment').text(paymentDisplay);
-  $('#payment-section').addClass('hidden');
-  $('#review-section').removeClass('hidden').css('display', '');
+        $('#payment-section').addClass('hidden');
+        $('#review-section').removeClass('hidden').css('display', '');
         $('#step2').removeClass('step-active').addClass('step-inactive').removeAttr('aria-current');
         $('#step3').removeClass('step-inactive').addClass('step-active').attr('aria-current', 'step');
       }
@@ -1286,7 +1285,7 @@ jQuery(document).ready(function($) {
         };
       }
       $.ajax({
-        url: '/api/orders',
+        url: `${API_URL}/api/orders`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ 
@@ -1318,7 +1317,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: `/api/cart/update/${product_id}`,
+        url: `${API_URL}/api/cart/update/${product_id}`,
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify({ quantity: (item.quantity || 1) + 1, variant: item.variant, image_url, userId: getUserId() }),
@@ -1341,7 +1340,7 @@ jQuery(document).ready(function($) {
       }
       if (item.quantity > 1) {
         $.ajax({
-          url: `/api/cart/update/${product_id}`,
+          url: `${API_URL}/api/cart/update/${product_id}`,
           type: 'PUT',
           contentType: 'application/json',
           data: JSON.stringify({ quantity: item.quantity - 1, variant: item.variant, image_url, userId: getUserId() }),
@@ -1354,7 +1353,7 @@ jQuery(document).ready(function($) {
         });
       } else {
         $.ajax({
-          url: `/api/cart/remove/${product_id}?userId=${getUserId()}`,
+          url: `${API_URL}/api/cart/remove/${product_id}?userId=${getUserId()}`,
           type: 'DELETE',
           success: function() {
             fetchCart();
@@ -1511,7 +1510,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: '/api/cart/add',
+        url: `${API_URL}/api/cart/add`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ product_id, quantity: 1, image_url, variant: selectedVariant, userId: getUserId() }),
@@ -1535,7 +1534,7 @@ jQuery(document).ready(function($) {
       }
       if ($(this).hasClass('active')) {
         $.ajax({
-          url: `/api/wishlist/remove/${product_id}?userId=${getUserId()}`,
+          url: `${API_URL}/api/wishlist/remove/${product_id}?userId=${getUserId()}`,
           type: 'DELETE',
           success: function() {
             fetchWishlist();
@@ -1546,7 +1545,7 @@ jQuery(document).ready(function($) {
         });
       } else {
         $.ajax({
-          url: '/api/wishlist/add',
+          url: `${API_URL}/api/wishlist/add`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ product_id, userId: getUserId() }),
@@ -1559,8 +1558,6 @@ jQuery(document).ready(function($) {
         });
       }
     });
-
-  // loadProduct(); // Removed duplicate call to prevent running before products are loaded
   }
 
   // Index page logic
@@ -1613,7 +1610,7 @@ jQuery(document).ready(function($) {
       }
       if ($(this).hasClass('active')) {
         $.ajax({
-          url: `/api/wishlist/remove/${product_id}?userId=${getUserId()}`,
+          url: `${API_URL}/api/wishlist/remove/${product_id}?userId=${getUserId()}`,
           type: 'DELETE',
           success: function() {
             fetchWishlist();
@@ -1624,7 +1621,7 @@ jQuery(document).ready(function($) {
         });
       } else {
         $.ajax({
-          url: '/api/wishlist/add',
+          url: `${API_URL}/api/wishlist/add`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ product_id, userId: getUserId() }),
@@ -1648,7 +1645,7 @@ jQuery(document).ready(function($) {
         return;
       }
       $.ajax({
-        url: '/api/cart/add',
+        url: `${API_URL}/api/cart/add`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ product_id, quantity: 1, image_url, userId: getUserId() }),
@@ -1698,7 +1695,7 @@ jQuery(document).ready(function($) {
           return;
         }
         $.ajax({
-          url: '/api/cart/add',
+          url: `${API_URL}/api/cart/add`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ product_id: product.id, quantity: 1, image_url, userId: getUserId() }),
@@ -1731,7 +1728,7 @@ jQuery(document).ready(function($) {
           return;
         }
         $.ajax({
-          url: '/api/feedback',
+          url: `${API_URL}/api/feedback`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({
@@ -1764,7 +1761,7 @@ jQuery(document).ready(function($) {
       const comments = $('#comments').val().trim();
       if (name && email && feedbackType && comments && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         $.ajax({
-          url: '/api/feedback',
+          url: `${API_URL}/api/feedback`,
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ name, email, feedbackType, comments }),
