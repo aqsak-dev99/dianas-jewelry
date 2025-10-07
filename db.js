@@ -1,4 +1,10 @@
 require("dotenv").config();
+// Debug log for Railway environment troubleshooting
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? '***' : 'MISSING');
+console.log('DB_NAME:', process.env.DB_NAME);
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
 const mysql = require("mysql2/promise");
 
 // Support Railway DATABASE_URL
