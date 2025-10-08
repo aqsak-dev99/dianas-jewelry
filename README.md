@@ -32,6 +32,8 @@ The site is powered by Node.js, Express, and MySQL, and is deployed live on [Rai
 - Professional UI with fonts, icons, and images  
 
 🖼️ Screenshots
+
+
 <img src="screenshots/Screenshot.png" width="300" alt="Product Page">
 <img src="screenshots/Screenshot2.png" width="300" alt="Homepage">
 <img src="screenshots/Screenshot3.png" width="300" alt="Confetti">
