@@ -53,3 +53,26 @@ The site is powered by Node.js, Express, and MySQL, and is deployed live on [Rai
    bash
    git clone https://github.com/aqsak-dev99/dianas-jewelry.git
    cd dianas-jewelry
+   npm  install
+
+➜ Install dependencies:
+  
+➜ Set up the database
+Open MySQL and create a new database, e.g. dianas_jewelry
+Import the provided SQL file dianas_jewelry.sql:
+SOURCE dianas_jewelry.sql;
+➜ Configure environment variables
+➜ Create a .env file in the root directory
+➜ Add your database and server configuration, e.g.:
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=dianas_jewelry
+PORT=3000
+➜ Start the server
+npm start
+➜ Open in your browser
+Visit http://localhost:3000 to see the website live locally
+Optional
+➜ To stop the server, press Ctrl + C in the terminal
+➜ Make sure MySQL is running whenever you want to use the site
