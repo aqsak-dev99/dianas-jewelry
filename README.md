@@ -34,15 +34,12 @@ The site is powered by Node.js, Express, and MySQL, and is deployed live on [Rai
 
 📸 Screenshots
 
- Homepage
-![Homepage](images/1.jpg)
-
- Product Page
-![Product Page](images/3.jpg)
-
- Cart & Checkout
-![Cart](images/5.jpg)
-
+<p align="center">
+  <img src="screenshots/Screenshot.png" width="800" alt="Homepage">
+  <img src="screenshots/Screenshot2.png" width="800" alt="Product Page">
+  <img src="screenshots/Screenshot3.png" width="800" alt="Cart">
+  <img src="screenshots/Screenshot4.png" width="800" alt="AI Chat">
+</p>
 
 
  🚀 Getting Started
