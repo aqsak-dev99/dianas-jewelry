@@ -32,10 +32,10 @@ The site is powered by Node.js, Express, and MySQL, and is deployed live on [Rai
 - Professional UI with fonts, icons, and images  
 
 🖼️ Screenshots
-  <img src="screenshots/Screenshot.png" width="800" alt="Product Page">
-  <img src="screenshots/Screenshot2.png" width="800" alt="Homepage">
-  <img src="screenshots/Screenshot3.png" width="800" alt="Confetti">
-  <img src="screenshots/Screenshot4.png" width="800" alt="Check out">
+<img src="screenshots/Screenshot.png" width="300" alt="Product Page">
+<img src="screenshots/Screenshot2.png" width="300" alt="Homepage">
+<img src="screenshots/Screenshot3.png" width="300" alt="Confetti">
+<img src="screenshots/Screenshot4.png" width="300" alt="Check out">
 
 
 
