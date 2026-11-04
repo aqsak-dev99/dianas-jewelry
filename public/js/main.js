@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
   // Define API base URL
-  const API_URL = 'https://dianas-jewelry-production.up.railway.app';
+  // Same server serves the pages and the API, so relative URLs work locally and on Render
+  const API_URL = '';
 
   // Helper: Ensure products are loaded before calling loadProduct
   function ensureProductsLoadedThenLoadProduct() {

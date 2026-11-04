@@ -8,12 +8,18 @@ const db = require("./db"); // Import DB pool
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Validate OpenAI API key
-if (!process.env.OPENAI_API_KEY) {
-  console.error("❌ OPENAI_API_KEY not found in .env. Exiting.");
-  process.exit(1);
+// OpenAI key is optional: the shop still works without it, only the AI chat/search is disabled
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+if (!openai) {
+  console.warn("⚠️ OPENAI_API_KEY not set — AI chat and AI search are disabled.");
 }
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Returns true (and sends a friendly reply) when AI is unavailable
+const aiUnavailable = (res) => {
+  if (openai) return false;
+  res.status(503).json({ error: "AI assistant is not configured right now." });
+  return true;
+};
 
 // Middleware
 app.use(cors());
@@ -39,6 +45,7 @@ app.get("/api/hello", (req, res) => {
 // ---------- AI Routes ----------
 
 app.post("/api/chat", async (req, res) => {
+  if (aiUnavailable(res)) return;
   try {
     const { message } = req.body;
     if (!message || typeof message !== "string" || message.trim() === "") {
@@ -63,6 +70,7 @@ app.post("/api/chat", async (req, res) => {
 });
 
 app.post("/api/ask", async (req, res) => {
+  if (aiUnavailable(res)) return;
   try {
     const { message } = req.body;
     if (!message || typeof message !== "string" || message.trim() === "") {
@@ -353,7 +361,9 @@ app.post("/api/newsletter", async (req, res) => {
 
 app.post("/api/feedback", async (req, res) => {
   try {
-    const { name, email, feedback_type, comments } = req.body;
+    const { name, email, comments } = req.body;
+    // Frontend sends `feedbackType`; accept both spellings
+    const feedback_type = req.body.feedback_type || req.body.feedbackType;
     if (!name || !email || !feedback_type || !comments || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: "All fields are required with valid email" });
     }
