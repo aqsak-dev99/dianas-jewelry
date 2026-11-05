@@ -11,10 +11,14 @@ const PORT = process.env.PORT || 5000;
 // ---------- AI setup (Google Gemini via its OpenAI-compatible endpoint) ----------
 // The key is optional: the shop still works without it, only AI chat/search is disabled.
 const AI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+// Used automatically when the main model is busy (503) or rate-limited (429)
+const AI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || "gemini-2.5-flash";
 const ai = process.env.GEMINI_API_KEY
   ? new OpenAI({
       apiKey: process.env.GEMINI_API_KEY,
       baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+      timeout: 25000, // give up after 25s instead of hanging
+      maxRetries: 1,
     })
   : null;
 if (!ai) {
@@ -41,14 +45,24 @@ async function getCatalogueText() {
 
 async function askAI(systemPrompt, userMessage) {
   const catalogue = await getCatalogueText();
-  const response = await ai.chat.completions.create({
-    model: AI_MODEL,
-    messages: [
-      { role: "system", content: `${systemPrompt}\n\nCurrent product catalogue:\n${catalogue}` },
-      { role: "user", content: userMessage },
-    ],
-  });
-  return response.choices[0].message.content;
+  const messages = [
+    { role: "system", content: `${systemPrompt}\n\nCurrent product catalogue:\n${catalogue}` },
+    { role: "user", content: userMessage },
+  ];
+  const models = [...new Set([AI_MODEL, AI_FALLBACK_MODEL])];
+  let lastError;
+  for (const model of models) {
+    try {
+      const response = await ai.chat.completions.create({ model, messages });
+      return response.choices[0].message.content;
+    } catch (err) {
+      lastError = err;
+      // Only fall back when the model is busy or rate-limited; other errors (bad key etc.) stop here
+      if (![429, 500, 503].includes(err.status)) throw err;
+      console.warn(`⚠️ ${model} unavailable (${err.status}), trying next model...`);
+    }
+  }
+  throw lastError;
 }
 
 // Middleware
@@ -556,7 +570,7 @@ app.put("/api/customers/:id/password", async (req, res) => {
 
 app.listen(PORT, async () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
-  console.log(`🤖 AI assistant: ${ai ? `Gemini (${AI_MODEL})` : "disabled"}`);
+  console.log(`🤖 AI assistant: ${ai ? `Gemini (${AI_MODEL}, fallback ${AI_FALLBACK_MODEL})` : "disabled"}`);
   try {
     const [rows] = await db.query("SELECT 1 AS test");
     console.log(`✅ Database connection verified: ${rows[0].test}`);

@@ -853,16 +853,30 @@ jQuery(document).ready(function($) {
       appendMessage(input, 'user');
       $('#chat-input').val('');
 
+      // Show a "typing" bubble while waiting for the AI
+      const $typing = $('<div class="bot-message typing">Typing…</div>');
+      $('#chat-messages').append($typing).scrollTop($('#chat-messages')[0].scrollHeight);
+      $('#send-btn, #chat-input').prop('disabled', true);
+
       $.post({
         url: `${API_URL}/api/chat`,
         contentType: 'application/json',
         data: JSON.stringify({ message: input }),
+        timeout: 40000,
         success: function(response) {
-          appendMessage(response.reply, 'bot');
+          appendMessage(response.reply || 'Sorry, I could not find an answer.', 'bot');
         },
-        error: function(xhr) {
+        error: function(xhr, status) {
           console.error('Chat API error:', xhr.status, xhr.responseText);
-          appendMessage(`Sorry, I encountered an error (${xhr.status}). Try again!`, 'bot');
+          const msg = status === 'timeout'
+            ? 'The assistant is taking too long. Please try again.'
+            : (xhr.responseJSON && xhr.responseJSON.error) || `Sorry, I encountered an error (${xhr.status}). Try again!`;
+          appendMessage(msg, 'bot');
+        },
+        complete: function() {
+          $typing.remove();
+          $('#send-btn, #chat-input').prop('disabled', false);
+          $('#chat-input').trigger('focus');
         }
       });
     }
