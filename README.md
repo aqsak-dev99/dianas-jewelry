@@ -25,8 +25,10 @@ The backend is a Node.js/Express REST API backed by MySQL. The frontend is serve
 - Multi-step checkout (shipping → payment → review) with order history
 
 **AI**
-- AI shopping assistant (Google Gemini) that answers from the live product catalogue, with real names and prices
+- AI shopping assistant powered by Groq (`openai/gpt-oss-120b`) that answers from the live product catalogue, with real names and prices
 - AI-powered product search over the catalogue
+- Automatic retries when the AI provider is busy, a typing indicator, and clear fallback messages
+- Google Gemini supported as an alternative provider, switchable with one environment variable
 - The store keeps working if the AI service is unavailable; only the AI features are switched off
 
 **Customer engagement**
@@ -43,7 +45,7 @@ The backend is a Node.js/Express REST API backed by MySQL. The frontend is serve
 | Backend | Node.js, Express.js (REST API) |
 | Frontend | HTML, CSS, JavaScript, jQuery |
 | Database | MySQL 8 (`mysql2` connection pool) |
-| AI | Google Gemini API (via the OpenAI-compatible SDK) |
+| AI | Groq (`openai/gpt-oss-120b`) via the OpenAI SDK; Google Gemini as an alternative |
 | Hosting | Render (app), Aiven (managed MySQL with SSL) |
 | Version control | Git & GitHub |
 
@@ -70,6 +72,12 @@ The backend is a Node.js/Express REST API backed by MySQL. The frontend is serve
     <td align="center" width="50%">
       <img src="screenshots/Screenshot3.png" alt="Checkout" width="100%"><br>
       <sub><b>Checkout</b> – order review and confirmation</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="screenshots/Screenshot5.png" alt="AI shopping assistant" width="100%"><br>
+      <sub><b>AI shopping assistant</b> – answers from the live catalogue with real products and prices</sub>
     </td>
   </tr>
 </table>
@@ -111,7 +119,8 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=dianas_jewelry
 DB_SSL=false          # set to true for hosted MySQL such as Aiven
-GEMINI_API_KEY=your_gemini_key   # optional: AI features are disabled without it
+GROQ_API_KEY=your_groq_key       # AI assistant (Groq)
+GEMINI_API_KEY=your_gemini_key   # optional: used only when no Groq key is set
 PORT=5000
 ```
 
