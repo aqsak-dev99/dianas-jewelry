@@ -8,18 +8,48 @@ const db = require("./db"); // Import DB pool
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// OpenAI key is optional: the shop still works without it, only the AI chat/search is disabled
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
-if (!openai) {
-  console.warn("⚠️ OPENAI_API_KEY not set — AI chat and AI search are disabled.");
+// ---------- AI setup (Google Gemini via its OpenAI-compatible endpoint) ----------
+// The key is optional: the shop still works without it, only AI chat/search is disabled.
+const AI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const ai = process.env.GEMINI_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+      baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+    })
+  : null;
+if (!ai) {
+  console.warn("⚠️ GEMINI_API_KEY not set — AI chat and AI search are disabled.");
 }
 
 // Returns true (and sends a friendly reply) when AI is unavailable
 const aiUnavailable = (res) => {
-  if (openai) return false;
+  if (ai) return false;
   res.status(503).json({ error: "AI assistant is not configured right now." });
   return true;
 };
+
+// Builds a short catalogue from the database so the assistant answers with real products and prices
+async function getCatalogueText() {
+  const [rows] = await db.query(
+    "SELECT p.name, p.price, p.description, c.name AS category FROM products p " +
+    "LEFT JOIN categories c ON p.category_id = c.id"
+  );
+  return rows
+    .map((p) => `- ${p.name} (${p.category}): $${Number(p.price).toFixed(2)}. ${p.description || ""}`)
+    .join("\n");
+}
+
+async function askAI(systemPrompt, userMessage) {
+  const catalogue = await getCatalogueText();
+  const response = await ai.chat.completions.create({
+    model: AI_MODEL,
+    messages: [
+      { role: "system", content: `${systemPrompt}\n\nCurrent product catalogue:\n${catalogue}` },
+      { role: "user", content: userMessage },
+    ],
+  });
+  return response.choices[0].message.content;
+}
 
 // Middleware
 app.use(cors());
@@ -51,20 +81,15 @@ app.post("/api/chat", async (req, res) => {
     if (!message || typeof message !== "string" || message.trim() === "") {
       return res.status(400).json({ error: "Valid message is required" });
     }
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful assistant for a jewelry website. Keep answers short and friendly.",
-        },
-        { role: "user", content: message.trim() },
-      ],
-    });
-    const reply = response.choices[0].message.content;
+    const reply = await askAI(
+      "You are the friendly shopping assistant for Diana's Jewelry. Answer in 2-3 short sentences. " +
+      "Only recommend products from the catalogue below, with their real prices. " +
+      "If a question is not about jewelry or this shop, politely say you can only help with Diana's Jewelry.",
+      message.trim()
+    );
     res.json({ reply });
   } catch (error) {
-    console.error("❌ AI chat error:", error.message);
+    console.error("❌ AI chat error:", error.status || "", error.message);
     res.status(500).json({ error: "Something went wrong with AI. Check logs." });
   }
 });
@@ -76,20 +101,14 @@ app.post("/api/ask", async (req, res) => {
     if (!message || typeof message !== "string" || message.trim() === "") {
       return res.status(400).json({ error: "Valid search query is required" });
     }
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a search assistant for a jewelry website. Provide a concise list of matching products or relevant information.",
-        },
-        { role: "user", content: message.trim() },
-      ],
-    });
-    const answer = response.choices[0].message.content;
+    const answer = await askAI(
+      "You are the product search assistant for Diana's Jewelry. Return a short list of the products " +
+      "from the catalogue below that best match the search, each with its price. If nothing matches, say so.",
+      message.trim()
+    );
     res.json({ answer });
   } catch (error) {
-    console.error("❌ AI search error:", error.message);
+    console.error("❌ AI search error:", error.status || "", error.message);
     res.status(500).json({ error: "Something went wrong with search." });
   }
 });
@@ -537,7 +556,7 @@ app.put("/api/customers/:id/password", async (req, res) => {
 
 app.listen(PORT, async () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
-  console.log(`🔑 OpenAI key loaded: ${process.env.OPENAI_API_KEY ? "Yes" : "No"}`);
+  console.log(`🤖 AI assistant: ${ai ? `Gemini (${AI_MODEL})` : "disabled"}`);
   try {
     const [rows] = await db.query("SELECT 1 AS test");
     console.log(`✅ Database connection verified: ${rows[0].test}`);
