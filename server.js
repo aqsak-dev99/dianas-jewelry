@@ -8,21 +8,32 @@ const db = require("./db"); // Import DB pool
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ---------- AI setup (Google Gemini via its OpenAI-compatible endpoint) ----------
+// ---------- AI setup ----------
+// Uses Groq when GROQ_API_KEY is set, otherwise Google Gemini.
+// Both work with the OpenAI SDK; only the address, key and model differ.
 // The key is optional: the shop still works without it, only AI chat/search is disabled.
-const AI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-// Used automatically when the main model is busy (503) or rate-limited (429)
-const AI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || "gemini-2.5-flash";
-const ai = process.env.GEMINI_API_KEY
+const useGroq = Boolean(process.env.GROQ_API_KEY);
+const AI_PROVIDER = useGroq ? "Groq" : "Gemini";
+const AI_MODEL = useGroq
+  ? process.env.GROQ_MODEL || "openai/gpt-oss-120b"
+  : process.env.GEMINI_MODEL || "gemini-3.8-flash";
+// Used automatically when the main model is missing, busy or rate-limited
+const AI_FALLBACK_MODEL = useGroq
+  ? process.env.GROQ_FALLBACK_MODEL || AI_MODEL
+  : process.env.GEMINI_FALLBACK_MODEL || AI_MODEL;
+const apiKey = useGroq ? process.env.GROQ_API_KEY : process.env.GEMINI_API_KEY;
+const ai = apiKey
   ? new OpenAI({
-      apiKey: process.env.GEMINI_API_KEY,
-      baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
-      timeout: 25000, // give up after 25s instead of hanging
-      maxRetries: 1,
+      apiKey,
+      baseURL: useGroq
+        ? "https://api.groq.com/openai/v1"
+        : "https://generativelanguage.googleapis.com/v1beta/openai/",
+      timeout: 15000, // each attempt gives up after 15s instead of hanging
+      maxRetries: 2,  // when the provider is busy (503/429), wait briefly and retry automatically
     })
   : null;
 if (!ai) {
-  console.warn("⚠️ GEMINI_API_KEY not set — AI chat and AI search are disabled.");
+  console.warn("⚠️ No GROQ_API_KEY or GEMINI_API_KEY set — AI chat and AI search are disabled.");
 }
 
 // Returns true (and sends a friendly reply) when AI is unavailable
@@ -57,8 +68,8 @@ async function askAI(systemPrompt, userMessage) {
       return response.choices[0].message.content;
     } catch (err) {
       lastError = err;
-      // Only fall back when the model is busy or rate-limited; other errors (bad key etc.) stop here
-      if (![429, 500, 503].includes(err.status)) throw err;
+      // Fall back when the model is missing (404), busy (503) or rate-limited (429); key errors stop here
+      if (![404, 429, 500, 503].includes(err.status)) throw err;
       console.warn(`⚠️ ${model} unavailable (${err.status}), trying next model...`);
     }
   }
@@ -104,7 +115,12 @@ app.post("/api/chat", async (req, res) => {
     res.json({ reply });
   } catch (error) {
     console.error("❌ AI chat error:", error.status || "", error.message);
-    res.status(500).json({ error: "Something went wrong with AI. Check logs." });
+    const busy = [429, 503].includes(error.status);
+    res.status(busy ? 503 : 500).json({
+      error: busy
+        ? "Our assistant is busy right now. Please try again in a moment."
+        : "Sorry, the assistant ran into a problem. Please try again.",
+    });
   }
 });
 
@@ -570,7 +586,7 @@ app.put("/api/customers/:id/password", async (req, res) => {
 
 app.listen(PORT, async () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
-  console.log(`🤖 AI assistant: ${ai ? `Gemini (${AI_MODEL}, fallback ${AI_FALLBACK_MODEL})` : "disabled"}`);
+  console.log(`🤖 AI assistant: ${ai ? `${AI_PROVIDER} (${AI_MODEL}${AI_FALLBACK_MODEL !== AI_MODEL ? `, fallback ${AI_FALLBACK_MODEL}` : ""})` : "disabled"}`);
   try {
     const [rows] = await db.query("SELECT 1 AS test");
     console.log(`✅ Database connection verified: ${rows[0].test}`);
