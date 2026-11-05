@@ -44,11 +44,30 @@ Version control	Git & GitHub
 
 🖼️ Screenshots
 
+## 🖼️ Screenshots
 
-<img src="screenshots/Screenshot.png" width="300" alt="Product Page">
-<img src="screenshots/Screenshot2.png" width="300" alt="Homepage">
-<img src="screenshots/Screenshot3.png" width="300" alt="Confetti">
-<img src="screenshots/Screenshot4.png" width="300" alt="Check out">
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="screenshots/home.png" alt="Home page" width="100%"><br>
+      <sub><b>Home page</b> – hero slider and featured collections</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="screenshots/products.png" alt="Product catalogue" width="100%"><br>
+      <sub><b>Product catalogue</b> – category filters loaded from MySQL</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="screenshots/checkout.png" alt="Checkout" width="100%"><br>
+      <sub><b>Checkout</b> – order review and confirmation</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="screenshots/chat.png" alt="AI assistant" width="100%"><br>
+      <sub><b>AI assistant</b> – Gemini-powered product help</sub>
+    </td>
+  </tr>
+</table>
 
 
 🚀 Getting Started
