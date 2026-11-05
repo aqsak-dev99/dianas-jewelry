@@ -1,6 +1,6 @@
 💎 Diana's Jewelry
 
-[![Live Demo]](🔗 Live demo: https://dianas-jewelry.onrender.com)
+(🔗 Live demo: https://dianas-jewelry.onrender.com)
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 
 Hosted on Render's free tier: the first load after a quiet period can take up to a minute while the server wakes up.
