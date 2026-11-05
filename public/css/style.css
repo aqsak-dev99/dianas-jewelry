@@ -3353,3 +3353,6 @@ body.dark #menu .dropdown li a:hover {
 .wishlist-btn {
   color: #dc3545;
 }
+.bot-message {
+  text-align: left;
+}
