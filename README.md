@@ -113,6 +113,8 @@ Wishlist	GET /api/wishlist, POST /api/wishlist/add, DELETE /api/wishlist/remove/
 Orders	POST /api/orders, GET /api/orders, GET /api/order_items/:orderId
 AI	POST /api/chat, POST /api/ask
 Other	POST /api/newsletter, POST /api/feedback, POST /api/customers/signup
+
+
 ☁️ Deployment
 App: Render web service (build npm install, start node server.js), redeployed automatically on every push to main
 Database: Aiven managed MySQL over SSL
