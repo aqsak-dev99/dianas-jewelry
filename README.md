@@ -42,33 +42,31 @@ AI	Google Gemini API (via the OpenAI-compatible SDK)
 Hosting	Render (app), Aiven (managed MySQL with SSL)
 Version control	Git & GitHub 
 
-🖼️ Screenshots
 
 ## 🖼️ Screenshots
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <img src="screenshots/home.png" alt="Home page" width="100%"><br>
+      <img src="screenshots/Screenshot2.png" alt="Home page" width="100%"><br>
       <sub><b>Home page</b> – hero slider and featured collections</sub>
     </td>
     <td align="center" width="50%">
-      <img src="screenshots/products.png" alt="Product catalogue" width="100%"><br>
+      <img src="screenshots/Screenshot.png" alt="Product catalogue" width="100%"><br>
       <sub><b>Product catalogue</b> – category filters loaded from MySQL</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <img src="screenshots/checkout.png" alt="Checkout" width="100%"><br>
-      <sub><b>Checkout</b> – order review and confirmation</sub>
+      <img src="screenshots/Screenshot4.png" alt="Shopping cart" width="100%"><br>
+      <sub><b>Shopping cart</b> – quantities and order total</sub>
     </td>
     <td align="center" width="50%">
-      <img src="screenshots/chat.png" alt="AI assistant" width="100%"><br>
-      <sub><b>AI assistant</b> – Gemini-powered product help</sub>
+      <img src="screenshots/Screenshot3.png" alt="Checkout" width="100%"><br>
+      <sub><b>Checkout</b> – order review and confirmation</sub>
     </td>
   </tr>
 </table>
-
 
 🚀 Getting Started
 Prerequisites
